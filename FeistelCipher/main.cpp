@@ -4,6 +4,8 @@
 #include <vector>
 
 uint32_t roundFunction(uint32_t right, uint64_t key){
+    key = (key ^ 0x0000000f) | (key ^ 0xfffffff0);
+    right = (right & 0x0000fff) | (right &  0xfffff000);
     return right ^ static_cast<uint32_t>(key);
 }
 
@@ -12,6 +14,7 @@ uint64_t feistelEncryption(uint64_t block, uint64_t key){
     uint32_t right = static_cast<uint32_t>(block);
     const int rounds{16};
     for (int round = 0; round < rounds; ++round) {
+        
         uint32_t temp = left;
         left = right;
         right = temp ^ roundFunction(right, key);
@@ -68,8 +71,8 @@ std::string blocksToText(const std::vector<uint64_t>& blocks){
 }
 
 int main(){
-    std::string plaintext{"London is the capital of Great Britain"};
-    uint64_t key{0xaff0f0f0faf0f0fd};
+    std::string plaintext{"Quick brown fox jumps over the lazy dog"};
+    uint64_t key{0xfed321683178ae51};
     auto blocks = textToBlocks(plaintext);
     for(auto& block : blocks){
         block = feistelDecryption(block,key);
