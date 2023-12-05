@@ -4,7 +4,6 @@
 #include <vector>
 
 uint32_t roundFunction(uint32_t right, uint64_t key){
-    key = (key ^ 0x0000000f) | (key ^ 0xfffffff0);
     right = (right & 0x0000fff) | (right &  0xfffff000);
     return right ^ static_cast<uint32_t>(key);
 }
@@ -14,7 +13,7 @@ uint64_t feistelEncryption(uint64_t block, uint64_t key){
     uint32_t right = static_cast<uint32_t>(block);
     const int rounds{16};
     for (int round = 0; round < rounds; ++round) {
-        
+        key = (key ^ 0x0000000f) | (key ^ 0xfffffff0);
         uint32_t temp = left;
         left = right;
         right = temp ^ roundFunction(right, key);
@@ -30,6 +29,7 @@ uint64_t feistelDecryption(uint64_t block, uint64_t key){
     const int rounds{16};
     // Reverse the key schedule
     for (int round = 0; round < rounds; ++round) {
+        key = (key ^ 0x0000000f) | (key ^ 0xfffffff0);
         uint32_t temp = left;
         left = right;
         right = temp ^ roundFunction(right, key);
